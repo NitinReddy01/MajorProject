@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const adminSchema = new mongoose.Schema({
     email:{
         type:String,
         required:true,
@@ -28,16 +28,16 @@ const userSchema = new mongoose.Schema({
     },
     emailVerified:{
         type:Boolean,
-        default:false
+        default:true
     },
     emailVerificationCode:{
         type:String,
-        trim:true
+        default:""
     },
     userType:{
         type:String,
-        default:"user"
+        default:"admin"
     }
-});
+})
 
-export const User = mongoose.model('User',userSchema);
+export const Admin = mongoose.model('Admin',adminSchema);

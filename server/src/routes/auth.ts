@@ -5,28 +5,64 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import verificationMail from "../services/mailService";
 import jwt from 'jsonwebtoken';
+import { Doctor } from "../model/Doctor";
+import { Admin } from "../model/Admin";
 
 const authRouter = express.Router();
 
-const signupBody = z.strictObject({
+const userSignupBody = z.strictObject({
     email:z.string().email(),
     password:z.string(),
     firstname:z.string(),
-    lastname:z.string()
+    lastname:z.string(),
+});
+
+const doctorSignUpBody = z.strictObject({
+    email:z.string().email(),
+    password:z.string(),
+    firstname:z.string(),
+    lastname:z.string(),
+    hospitalName:z.string(),
+    specialization:z.string()
 })
 
 const signinBody = z.strictObject({
     email:z.string().email(),
-    password:z.string()
-})
+    password:z.string(),
+    role:z.string()
+});
+
+export const findEmail= async (email:string)=>{
+    let existingUser = await User.findOne({email});
+    let existingDoctor = await Doctor.findOne({email});
+    let existingAdmin = await Admin.findOne({email});
+    if(existingAdmin) return existingAdmin;
+    if(existingDoctor) return existingDoctor;
+    if(existingUser) return existingUser;
+    return "";
+}
 
 authRouter.post('/signin',async (req,res)=>{
     const {success} = signinBody.safeParse(req.body);
     if(!success) return res.status(400).json({message:"Invalid Inputs"});
     try {
-        const user = await User.findOne({email:req.body.email});
+        let user;
+        switch (req.body.role.toLowerCase()) {
+            case 'user':
+                user = await User.findOne({email:req.body.email});
+                break;
+            case 'doctor':
+                user = await Doctor.findOne({email:req.body.email});
+
+                break;
+            case 'admin':
+                user = await Admin.findOne({email:req.body.email});
+                break;
+            default:
+                break;
+        }
         if(!user){
-            return res.status(404).json({message:'No User found'});
+            return res.status(404).json({message:"No User found"});
         }
         const match = await bcrypt.compare(req.body.password,user.password);
         if(!match){
@@ -47,11 +83,47 @@ authRouter.post('/signin',async (req,res)=>{
     }
 });
 
-authRouter.post('/signup',async (req,res)=>{
-    const {success} = signupBody.safeParse(req.body);
+authRouter.post('/doctor-signup',async (req,res)=>{
+    const {success} = doctorSignUpBody.safeParse(req.body);
+    if(!success) return res.status(400).json({message:"Invalid Inputs"});
+    try {
+        const existingUser = await findEmail(req.body.email);
+        if(existingUser && existingUser.emailVerified){
+            return res.status(409).json({message:"User already exists with that username"})
+        }
+        if(existingUser && !existingUser.emailVerified){
+            await User.deleteOne({email:existingUser.email});
+        }
+        const hashedPass = await bcrypt.hash(req.body.password,10);
+        const code = crypto.randomBytes(16).toString('hex');
+        await Doctor.create({
+            email:req.body.email,
+            password:hashedPass,
+            emailVerificationCode:code,
+            firstname:req.body.firstname,
+            lastname:req.body.lastname,
+            hospitalName:req.body.hospitalName,
+            specialization:req.body.specialization
+        })
+        const link = `http://localhost:3000/verify?email=${req.body.email}&code=${code}`;
+        const html = `<p> Click <a href=${link} >here</a> to verify </p>`;
+        const result = await verificationMail(req.body.email,html);
+        if(!result.success){
+            return res.status(500).json({message:"Unable to Send mail Try again later"});
+        }
+        res.status(200).json({message:"Please Check your mail for verfication"});
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+});
+
+authRouter.post('/user-signup',async (req,res)=>{
+    const {success} = userSignupBody.safeParse(req.body);
     if(!success) return res.status(400).json({message:"Invalid Inputs"});
     try{
-        const existingUser = await User.findOne({email:req.body.email});
+        const existingUser = await findEmail(req.body.email);
         if(existingUser && existingUser.emailVerified){
             return res.status(409).json({message:"User already exists with that username"});
         } 
@@ -78,24 +150,32 @@ authRouter.post('/signup',async (req,res)=>{
         console.log(err);
         res.status(500).json({message:"Internal Server Error"});
     }
-})
+});
 
 authRouter.get('/verifyEmail/:email/:code',async (req,res)=>{
     const {email,code} = req.params;
     if(!email || !code){
         return res.status(400).json({message:"Missing email or code"});
     }
-    const user = await User.findOne({email});
+    const user = await findEmail(email);
     if(!user){
         return res.status(404).json({message:"No User found"});
     }
-    if(code !== user.emailVerificationCode){
+    if(user && code !== user.emailVerificationCode){
         return res.status(401).json({message:"Verification Failed"});
     }
     user.emailVerified=true;
     user.emailVerificationCode="";
     await user.save();
+    if(user.userType==="doctor"){
+        const link = `http://localhost:3000/verify?doctor=${user.email}`;
+        const html = `<p> Click <a href=${link} >here</a> to verify </p>`;
+        const result = await verificationMail(req.body.email,html);
+        if(!result.success){
+            return res.status(500).json({message:"Something went wrong please try again later"});
+        }
+    }
     return res.status(200).json({message:"Email Verified"});
-})
+});
 
 export default authRouter;
