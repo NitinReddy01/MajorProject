@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
-import axios from "../api/axios";
-import Loading from "../Components/Loading";
+import axios from "../../api/axios";
+import Loading from "../../Components/Loading";
 
 export default function EmailVerification() {
     const [queryParams] = useSearchParams();

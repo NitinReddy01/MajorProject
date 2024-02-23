@@ -1,9 +1,9 @@
 import { useState } from "react"
-import Button from "../Components/Button"
-import Footer from "../Components/Footer"
-import Heading from "../Components/Heading"
-import InputBox from "../Components/InputBox"
-import axios from "../api/axios"
+import Button from "../../Components/Button"
+import Footer from "../../Components/Footer"
+import Heading from "../../Components/Heading"
+import InputBox from "../../Components/InputBox"
+import axios from "../../api/axios"
 
 
 function Register() {

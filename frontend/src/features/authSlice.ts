@@ -4,6 +4,7 @@ const initialState = {
     id:"",
     email:"",
     accessToken : "",
+    role : ""
 }
 
 const authSlice = createSlice({
@@ -14,11 +15,13 @@ const authSlice = createSlice({
             state.id = action.payload.id;
             state.email = action.payload.email;
             state.accessToken = action.payload.accessToken;
+            state.role = action.payload.role
         },
         logout : (state)=>{
             state.id = "",
             state.email = "",
-            state.accessToken = ""
+            state.accessToken = "",
+            state.role= ""
         }
     }
 });

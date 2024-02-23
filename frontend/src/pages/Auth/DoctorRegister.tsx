@@ -1,9 +1,9 @@
 import { useState } from "react";
-import Heading from "../Components/Heading";
-import InputBox from "../Components/InputBox";
-import Footer from "../Components/Footer";
-import Button from "../Components/Button";
-import axios from "../api/axios";
+import Heading from "../../Components/Heading";
+import InputBox from "../../Components/InputBox";
+import Footer from "../../Components/Footer";
+import Button from "../../Components/Button";
+import axios from "../../api/axios";
 
 
 export default function DoctorRegister() {

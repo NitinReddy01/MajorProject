@@ -42,10 +42,10 @@ export const findEmail = async (email: string) => {
     return "";
 }
 
+// login route
 authRouter.post('/signin', async (req, res) => {
     const { success } = signinBody.safeParse(req.body);
     if (!success) return res.status(400).json({ message: "Invalid Inputs" });
-    console.log(req.body.role);
     try {
         let user;
         switch (req.body.role.toLowerCase()) {
@@ -76,13 +76,14 @@ authRouter.post('/signin', async (req, res) => {
         user.refreshToken = refreshToken;
         await user.save();
         res.cookie("token", refreshToken, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 24 * 60 * 60 * 1000 });
-        res.status(200).json({ accessToken, id: user._id });
+        res.status(200).json({ accessToken, id: user._id,role:req.body.role,email:user.email });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
 
+// doctor signup
 authRouter.post('/doctor-signup', async (req, res) => {
     const { success } = doctorSignUpBody.safeParse(req.body);
     if (!success) return res.status(400).json({ message: "Invalid Inputs" });
@@ -119,6 +120,7 @@ authRouter.post('/doctor-signup', async (req, res) => {
     }
 });
 
+// user-signup
 authRouter.post('/user-signup', async (req, res) => {
     const { success } = userSignupBody.safeParse(req.body);
     if (!success) return res.status(400).json({ message: "Invalid Inputs" });
@@ -152,6 +154,7 @@ authRouter.post('/user-signup', async (req, res) => {
     }
 });
 
+// email verification
 authRouter.get('/verifyEmail/:email/:code', async (req, res) => {
     const { email, code } = req.params;
     if (!email || !code) {
@@ -178,35 +181,74 @@ authRouter.get('/verifyEmail/:email/:code', async (req, res) => {
     return res.status(200).json({ message: "Email Verified. You can close this page and login" });
 });
 
-// authRouter.get('/refresh-token', async (req, res) => {
-//     const token = req.cookies?.jwt;
-//     if (!token) {
-//         return res.sendStatus(401);
-//     }
-//     const decode = jwt.decode(token) as jwt.JwtPayload;
-//     let role: string = decode?.role;
-//     try {
-//         let user:Document ; 
-//         switch (role) {
-//             case 'user':
-//                 user = await User.findOne({ refreshToken: token });
-//                 break;
-//             case 'doctor':
-//                 user = await Doctor.findOne({ refreshToken: token });
+// get refresh token
+authRouter.get('/refresh-token', async (req, res) => {
+    const token = req.cookies?.token;
+    if (!token) {
+        return res.sendStatus(401);
+    }
+    const decode = jwt.decode(token) as jwt.JwtPayload;
+    let role: string = decode?.role;
+    try {
+        let user ; 
+        switch (role) {
+            case 'user':
+                user = await User.findOne({ refreshToken: token });
+                break;
+            case 'doctor':
+                user = await Doctor.findOne({ refreshToken: token });
 
-//                 break;
-//             case 'admin':
-//                 user = await Admin.findOne({ refreshToken: token });
-//                 break;
-//             default:
-//                 break;
-//         }
-//         if (!user) return res.sendStatus(403);
-//     } catch (error) {
-//         console.log(error);
-//         res.sendStatus(500);
-//     }
+                break;
+            case 'admin':
+                user = await Admin.findOne({ refreshToken: token });
+                break;
+            default:
+                break;
+        }
+        if (!user) return res.sendStatus(403);
+        try {
+            const decode  = jwt.verify(token,process.env.REFRESH_TOKEN_SECRET!) as jwt.JwtPayload;
+            if(decode.id !== user._id.toString()) return res.sendStatus(403);
+            const accessToken = jwt.sign({ id: user._id, role: req.body.role }, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '1d' });
+            res.status(200).json({id:user._id,email:user.email,accessToken});
+        } catch (error) {
+            return res.sendStatus(403);
+        }
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
 
-// })
+// logout route
+authRouter.get('/logout',async (req,res)=>{
+    const token = req.cookies?.token;
+    if(!token) return res.sendStatus(204);
+    const decode = jwt.decode(token) as jwt.JwtPayload;
+    const role = decode.role;
+    let user;
+    switch (role) {
+        case 'user':
+            user = await User.findOne({ refreshToken: token });
+            break;
+        case 'doctor':
+            user = await Doctor.findOne({ refreshToken: token });
+
+            break;
+        case 'admin':
+            user = await Admin.findOne({ refreshToken: token });
+            break;
+        default:
+            break;
+    }
+    if(!user){
+        res.clearCookie("token", { httpOnly: true, secure: true, sameSite: 'none', maxAge: 24 * 60 * 60 * 1000 });
+        return  res.sendStatus(204);
+    }
+    user.refreshToken = '';
+    await user.save();
+    res.clearCookie("token", { httpOnly: true, secure: true, sameSite: 'none', maxAge: 24 * 60 * 60 * 1000 });
+    return  res.sendStatus(204);
+})
 
 export default authRouter;

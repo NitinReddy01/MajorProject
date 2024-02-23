@@ -1,21 +1,23 @@
-import Button from "../Components/Button"
-import Dropdown from "../Components/Dropdown"
-import Footer from "../Components/Footer"
-import Heading from "../Components/Heading"
-import InputBox from "../Components/InputBox"
+import Button from "../../Components/Button"
+import Dropdown from "../../Components/Dropdown"
+import Footer from "../../Components/Footer"
+import Heading from "../../Components/Heading"
+import InputBox from "../../Components/InputBox"
 import { useState } from "react"
-import axios from "../api/axios"
+import axios from "../../api/axios"
+import { useAppDispatch } from "../../app/hook"
+import { setAuth } from "../../features/authSlice"
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
+    const dispatch = useAppDispatch();
 
     const submit = async () => {
         try {
-            console.log(role);
             let res = await axios.post('/auth/signin',{email,password,role});
-            console.log(res.data);
+            dispatch(setAuth(res.data));
             setEmail('');
             setPassword('');
             setRole('');

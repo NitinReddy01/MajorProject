@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom'
 import './App.css'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import DoctorRegister from './pages/DoctorRegister'
-import EmailVerification from './pages/EmailVerification'
+import Login from './pages/Auth/Login'
+import Register from './pages/Auth/Register'
+import DoctorRegister from './pages/Auth/DoctorRegister'
+import EmailVerification from './pages/Auth/EmailVerification'
 
 function App() {
 
