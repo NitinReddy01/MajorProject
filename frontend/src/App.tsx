@@ -1,10 +1,20 @@
+import { Route, Routes } from 'react-router-dom'
 import './App.css'
+import Login from './pages/Auth/Login'
+import Register from './pages/Auth/Register'
+import DoctorRegister from './pages/Auth/DoctorRegister'
+import EmailVerification from './pages/Auth/EmailVerification'
 
 function App() {
 
   return (
     <>
-    dgh
+      <Routes>
+        <Route path='/login' element={<Login/>} />
+        <Route path='/register' element={<Register/>}/>
+        <Route path='/doctor-register' element={<DoctorRegister/>} />
+        <Route path='/verify' element={<EmailVerification/>}/>
+      </Routes>
     </>
   )
 }
