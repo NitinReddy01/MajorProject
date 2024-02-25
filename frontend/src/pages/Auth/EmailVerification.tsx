@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom"
 import axios from "../../api/axios";
-import Loading from "../../Components/Loading";
+import Loading from "../../Components/Elements/Loading";
 
 export default function EmailVerification() {
     const [queryParams] = useSearchParams();
@@ -13,8 +13,7 @@ export default function EmailVerification() {
     useEffect(() => {
         const verify = async () => {
             try {
-                let res = await axios.get(`/auth/verifyEmail/${email}/${code}`);
-                console.log(res);
+                const res = await axios.get(`/auth/verifyEmail/${email}/${code}`);
                 setMessage(res.data.message);
 
             } catch (error) {

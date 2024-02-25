@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Heading from "../../Components/Heading";
-import InputBox from "../../Components/InputBox";
-import Footer from "../../Components/Footer";
-import Button from "../../Components/Button";
+import Heading from "../../Components/Elements/Heading";
+import InputBox from "../../Components/Elements/InputBox";
+import Footer from "../../Components/Elements/Footer";
+import Button from "../../Components/Elements/Button";
 import axios from "../../api/axios";
 
 

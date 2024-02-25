@@ -15,6 +15,8 @@ const userSignupBody = z.strictObject({
     password: z.string(),
     firstname: z.string(),
     lastname: z.string(),
+    age:z.number(),
+    gender:z.number()
 });
 
 const doctorSignUpBody = z.strictObject({
@@ -139,7 +141,9 @@ authRouter.post('/user-signup', async (req, res) => {
             password: hashedPass,
             emailVerificationCode: code,
             firstname: req.body.firstname,
-            lastname: req.body.lastname
+            lastname: req.body.lastname,
+            age:req.body.age,
+            gender:req.body.gender
         })
         const link = `http://localhost:5173/verify?email=${req.body.email}&code=${code}`;
         const html = `<p> Click <a href=${link} >here</a> to verify </p>`;
@@ -210,7 +214,7 @@ authRouter.get('/refresh-token', async (req, res) => {
             const decode  = jwt.verify(token,process.env.REFRESH_TOKEN_SECRET!) as jwt.JwtPayload;
             if(decode.id !== user._id.toString()) return res.sendStatus(403);
             const accessToken = jwt.sign({ id: user._id, role: req.body.role }, process.env.ACCESS_TOKEN_SECRET!, { expiresIn: '1d' });
-            res.status(200).json({id:user._id,email:user.email,accessToken});
+            res.status(200).json({id:user._id,email:user.email,accessToken,role});
         } catch (error) {
             return res.sendStatus(403);
         }

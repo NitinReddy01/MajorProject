@@ -22,6 +22,16 @@ const userSchema = new mongoose.Schema({
         required:true,
         trim:true
     },
+    age:{
+        type:Number,
+        required:true,
+        trim:true
+    },
+    gender:{
+        type:Number,
+        required:true,
+        trim:true
+    },
     refreshToken:{
         type:String,
         trim:true
