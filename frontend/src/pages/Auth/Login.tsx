@@ -16,7 +16,7 @@ function Login() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || `/${role}`
+    const from = location.state?.from?.pathname || `/`
 
     const submit = async () => {
         try {

@@ -7,6 +7,7 @@ import EmailVerification from "./pages/Auth/EmailVerification";
 import Homepage from "./pages/User/Homepage";
 import RequireAuth from "./Components/Auth/RequireAuth";
 import PersistLogin from "./Components/Auth/PersistLogin";
+import Layout from "./Components/Layout";
 
 function App() {
   return (
@@ -17,8 +18,10 @@ function App() {
         <Route path="/doctor-register" element={<DoctorRegister />} />
         <Route path="/verify" element={<EmailVerification />} />
         <Route element={<PersistLogin />}>
-          <Route element={<RequireAuth allowedRole={"user"} />}>
-            <Route path="/user" element={<Homepage />} />
+          <Route element={<Layout/>} >
+            <Route element={<RequireAuth allowedRole={"user"} />}>
+              <Route path="/" element={<Homepage />} />
+            </Route>
           </Route>
         </Route>
       </Routes>
