@@ -76,7 +76,8 @@ const doctorSchema = new mongoose.Schema({
     userType:{
         type:String,
         default:"doctor"
-    }
+    },
+    patients:[{type:mongoose.Schema.Types.ObjectId,ref:'User'}]
 })
 
 export const Doctor = mongoose.model('Doctor',doctorSchema);
