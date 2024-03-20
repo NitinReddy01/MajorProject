@@ -66,8 +66,8 @@ export default function Homepage() {
   }
 
   return (
-    <div className="bg-slate-400 min-h-screen flex justify-center">
-      <div className="w-[65rem] text-center h-max bg-[#f5f7f6]">
+    <div className="bg-slate-400 flex justify-center">
+      <div className="w-[65rem] text-center bg-[#f5f7f6]">
         <Heading
           heading={
             "Upload Your Heart Details for Personalized Heart Health Analysis"

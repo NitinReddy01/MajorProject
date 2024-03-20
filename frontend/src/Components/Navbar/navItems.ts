@@ -19,7 +19,7 @@ export const navItems:NavItemsType = {
         },
         {
             name:"Reports",
-            link:'/patient/reports'
+            link:'/user/reports'
         }
     ],
     doctor: [

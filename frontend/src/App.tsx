@@ -8,6 +8,7 @@ import Homepage from "./pages/User/Homepage";
 import RequireAuth from "./Components/Auth/RequireAuth";
 import PersistLogin from "./Components/Auth/PersistLogin";
 import Layout from "./Components/Layout";
+import Reports from "./pages/User/Reports";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route element={<Layout/>} >
             <Route element={<RequireAuth allowedRole={"user"} />}>
               <Route path="/" element={<Homepage />} />
+              <Route path="/user/reports" element={<Reports />} />
             </Route>
           </Route>
         </Route>

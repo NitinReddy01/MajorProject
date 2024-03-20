@@ -1,4 +1,4 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
   age: { type: Number, required: true },
@@ -17,6 +17,6 @@ const reportSchema = new mongoose.Schema({
   prediction: { type: Number, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
-});
+},{timestamps:true});
 
 export const Report = mongoose.model("Report", reportSchema);

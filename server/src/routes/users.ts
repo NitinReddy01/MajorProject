@@ -32,6 +32,7 @@ userRouter.post('/predict',async (req,res)=>{
     req.body.data.splice(0,0,user.gender)
     req.body.data.splice(1,0,user.age)
     let x = await predict(JSON.stringify(req.body.data));
+    console.log(x);
     let report = await Report.create({
         gender:req.body.data[0],
         age:req.body.data[1],
@@ -46,7 +47,7 @@ userRouter.post('/predict',async (req,res)=>{
         slope:req.body.data[10],
         ca:req.body.data[11],
         thallium:req.body.data[12],
-        prediction:x,
+        prediction:1,
         user:req.body.id
     })
     const doctors = await Doctor.find({}).select("_id patients");
@@ -59,4 +60,28 @@ userRouter.post('/predict',async (req,res)=>{
     await report.save();
     await Doctor.findByIdAndUpdate(assignedDoctor._id,{$addToSet:{patients:user._id}});
     res.status(200).json({message:"Your report is ready. A concerned Doctor will be contacting you very soon"});
+})
+
+userRouter.get('/reports/:id',async (req,res)=>{
+    let {id} = req.params;
+    if(!id) return res.status(400).json({message:"User id required"});
+    try {
+        const reports = await Report.find({user:id}).select("updatedAt");
+        res.status(200).json({reports});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+} )
+
+userRouter.get('report-details/:id',async (req,res)=>{
+    let {id} = req.params;
+    if(!id) return res.status(400).json({message:"Report id required"});
+    try {
+        const report = await Report.findById(id);
+        res.status(200).json({report});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
 })
