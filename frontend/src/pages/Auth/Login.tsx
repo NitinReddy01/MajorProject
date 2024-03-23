@@ -1,13 +1,13 @@
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import Button from "../../Components/Elements/Button"
 import Dropdown from "../../Components/Elements/Dropdown"
 import Footer from "../../Components/Elements/Footer"
 import Heading from "../../Components/Elements/Heading"
 import InputBox from "../../Components/Elements/InputBox"
-import { useState } from "react"
 import axios from "../../api/axios"
 import { useAppDispatch } from "../../app/hook"
 import { setAuth } from "../../features/authSlice"
-import { useLocation, useNavigate } from "react-router-dom"
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -15,8 +15,7 @@ function Login() {
     const [role, setRole] = useState('');
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || `/`
+    const from =  `/${role}`
 
     const submit = async () => {
         try {

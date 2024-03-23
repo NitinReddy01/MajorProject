@@ -11,11 +11,11 @@ export const navItems:NavItemsType = {
     user: [
         {
             name: 'Profile',
-            link: '/profile',
+            link: '/user/profile',
         },
         {
             name: "Upload",
-            link: '/'
+            link: '/user'
         },
         {
             name:"Reports",
@@ -25,11 +25,11 @@ export const navItems:NavItemsType = {
     doctor: [
         {
             name: 'Profile',
-            link: '/profile',
+            link: '/doctor/profile',
         },
         {
-            name: "Pateints",
-            link: '/patients'
+            name: "Patients",
+            link: '/doctor'
         }
     ],
     admin : [

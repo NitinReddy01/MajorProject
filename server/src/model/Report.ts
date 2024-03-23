@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const reportSchema = new mongoose.Schema({
+  name : {type:String},
   age: { type: Number, required: true },
   gender: { type: Number, required: true },
   chestPainType: { type: Number, required: true },
@@ -17,6 +18,7 @@ const reportSchema = new mongoose.Schema({
   prediction: { type: Number, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
+  doctorReview : {type:Boolean,default:false}
 },{timestamps:true});
 
 export const Report = mongoose.model("Report", reportSchema);

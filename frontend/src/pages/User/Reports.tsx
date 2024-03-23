@@ -3,9 +3,10 @@ import { useAppSelector } from "../../app/hook"
 import useAxiosPrivate from "../../Hooks/useAxiosPrivate";
 import { Link } from "react-router-dom";
 
-interface Report {
+export interface Report {
     _id:string,
-    updatedAt : Date;
+    updatedAt : Date,
+    doctorReview:boolean
 }
 
 export default function Reports() {
@@ -19,7 +20,7 @@ export default function Reports() {
             setReports(res.data.reports);
         }
         getData()
-    },[id])
+    },[id,axios])
   return (
     <div className="bg-slate-400  flex justify-center">
         {reports && reports.length>0? <>
@@ -36,7 +37,8 @@ export default function Reports() {
                     <tr key={report._id} >
                         <td className="border border-gray-300 px-4 py-2">Report {report._id}</td>
                         <td className="border border-gray-300 px-4 py-2">{new Date(report.updatedAt).toLocaleDateString()}</td>
-                        <td className="border border-gray-300 px-4 py-2"> <Link to={""} >View Report</Link> </td>
+                        <td className="border border-gray-300 px-4 py-2">
+                            {report.doctorReview?<Link to={`/user/report/${report._id}`} >View Report</Link>:"Pending"}  </td>
                     </tr>
                 ))}
             </tbody>

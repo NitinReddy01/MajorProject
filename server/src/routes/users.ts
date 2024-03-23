@@ -3,6 +3,7 @@ import {spawn} from 'child_process';
 import { User } from '../model/User';
 import { Doctor } from '../model/Doctor';
 import { Report } from '../model/Report';
+import { Feedback } from '../model/Feedback';
 
 export const userRouter = express.Router();
  
@@ -66,7 +67,7 @@ userRouter.get('/reports/:id',async (req,res)=>{
     let {id} = req.params;
     if(!id) return res.status(400).json({message:"User id required"});
     try {
-        const reports = await Report.find({user:id}).select("updatedAt");
+        const reports = await Report.find({user:id}).select("updatedAt doctorReview");
         res.status(200).json({reports});
     } catch (error) {
         console.log(error);
@@ -74,12 +75,28 @@ userRouter.get('/reports/:id',async (req,res)=>{
     }
 } )
 
-userRouter.get('report-details/:id',async (req,res)=>{
+userRouter.get('/report-details/:id',async (req,res)=>{
     let {id} = req.params;
     if(!id) return res.status(400).json({message:"Report id required"});
     try {
         const report = await Report.findById(id);
-        res.status(200).json({report});
+        const feedback = await Feedback.findOne({report:id}).select("feedback");
+        res.status(200).json({report,feedback});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Internal Server Error"});
+    }
+})
+
+userRouter.get('/user-details/:id',async (req,res)=>{
+    const id:string = req.params.id;
+    if(!id) return res.status(400).json({message:"User id required"});
+    try {
+        const user = await User.findById(id).select("email firstname lastname age gender");
+        if(!user) {
+            return res.status(404).json({message:"No user found"});
+        }
+        res.send({user});
     } catch (error) {
         console.log(error);
         res.status(500).json({message:"Internal Server Error"});

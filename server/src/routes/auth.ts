@@ -95,7 +95,7 @@ authRouter.post('/doctor-signup', async (req, res) => {
             return res.status(409).json({ message: "User already exists with that username" })
         }
         if (existingUser && !existingUser.emailVerified) {
-            await User.deleteOne({ email: existingUser.email });
+            await Doctor.deleteOne({ email: existingUser.email });
         }
         const hashedPass = await bcrypt.hash(req.body.password, 10);
         const code = crypto.randomBytes(16).toString('hex');
@@ -106,7 +106,7 @@ authRouter.post('/doctor-signup', async (req, res) => {
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             hospitalName: req.body.hospitalName,
-            specialization: req.body.specialization
+            specialization: req.body.specialization,
         })
         const link = `http://localhost:3000/verify?email=${req.body.email}&code=${code}`;
         const html = `<p> Click <a href=${link} >here</a> to verify </p>`;
@@ -135,7 +135,7 @@ authRouter.post('/user-signup', async (req, res) => {
             await User.deleteOne({ email: existingUser.email });
         }
         const hashedPass = await bcrypt.hash(req.body.password, 10);
-        const code = await crypto.randomBytes(16).toString('hex');
+        const code = crypto.randomBytes(16).toString('hex');
         await User.create({
             email: req.body.email,
             password: hashedPass,
@@ -143,7 +143,7 @@ authRouter.post('/user-signup', async (req, res) => {
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             age:req.body.age,
-            gender:req.body.gender
+            gender:req.body.gender,
         })
         const link = `http://localhost:5173/verify?email=${req.body.email}&code=${code}`;
         const html = `<p> Click <a href=${link} >here</a> to verify </p>`;
