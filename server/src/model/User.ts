@@ -48,7 +48,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         default:"user"
     },
-    doctor:{type:mongoose.Schema.Types.ObjectId,ref:'Doctor'}
+    doctor:[{type:mongoose.Schema.Types.ObjectId,ref:'Doctor'}]
 });
 
 export const User = mongoose.model('User',userSchema);

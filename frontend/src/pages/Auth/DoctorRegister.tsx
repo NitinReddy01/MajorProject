@@ -16,7 +16,7 @@ export default function DoctorRegister() {
 
     const submit = async ()=>{
         try {
-            let res = await axios.post('/auth/doctor-signup',{email,password,firstname,lastname,hospitalName,specialization})
+            const res = await axios.post('/auth/doctor-signup',{email,password,firstname,lastname,hospitalName,specialization})
             console.log(res.data);
         } catch (error) {
             console.log(error);
@@ -24,7 +24,7 @@ export default function DoctorRegister() {
     }
 
     return (
-        <div className="h-screen bg-gray-400 flex justify-center items-center" >
+        <div className="h-screen bg-slate-400 flex justify-center items-center" >
         <div className=" w-96 h-max bg-white rounded-lg text-center p-4 ">
           <Heading heading={"Register"} subHeading={"Enter your information to create an account"}/>
           <InputBox placeholder={"Firstname"} type={"text"}  value={firstname} onChange={(e)=>setFirstName(e.target.value)}  label={"Firstname"} />

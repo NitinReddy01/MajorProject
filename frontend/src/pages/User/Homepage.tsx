@@ -60,8 +60,21 @@ export default function Homepage() {
     try {
       const res = await axios.post('/users/predict',{data,id});
       console.log(res.data);
+      setCa("")
+      setChestPain("");
+      setChol("");
+      setExang("");
+      setFbs("");
+      setOldPeak("");
+      setRestEcg("");
+      setSlope("");
+      setThal("");
+      setThalach("");
+      setTrestbps("");
+      alert(res.data.message);
     } catch (error) {
       console.log(error);
+      alert("Network Error");
     }
   }
 

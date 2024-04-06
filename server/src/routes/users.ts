@@ -55,11 +55,12 @@ userRouter.post('/predict',async (req,res)=>{
     if(doctors.length===0) return res.status(404).json({message:"No Doctors present"});
     doctors.sort((a,b)=>a.patients.length-b.patients.length);
     const assignedDoctor = doctors[0];
-    user.doctor = assignedDoctor._id;
+    user.doctor = [];
+    user.doctor.push(assignedDoctor._id);
     report.doctor = assignedDoctor._id;
+    await Doctor.findByIdAndUpdate(assignedDoctor._id,{$addToSet:{patients:user._id}});
     await user.save();
     await report.save();
-    await Doctor.findByIdAndUpdate(assignedDoctor._id,{$addToSet:{patients:user._id}});
     res.status(200).json({message:"Your report is ready. A concerned Doctor will be contacting you very soon"});
 })
 

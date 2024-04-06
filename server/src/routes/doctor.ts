@@ -11,9 +11,7 @@ doctorRouter.get('/all-patients/:id',async (req,res)=>{
         return res.sendStatus(400);
     }
     try {
-        console.log(id);
-        const patients = await User.find({doctor:id}).select("firstname lastname");
-        console.log(patients);
+        const patients = await User.find({ doctor: { $in: [id] } }).select("firstname lastname");
         res.json({patients});
     } catch (error) {
         console.log(error);
